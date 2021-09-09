@@ -1,0 +1,100 @@
+\documentclass{uni_tue_template}
+
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\hypersetup{
+			linkcolor={darkblue},
+			filecolor={darkgreen},
+			urlcolor={darkred},
+			citecolor={darkblue},
+}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\tikzset{<->,>=stealth',shorten >=1pt,auto,node distance=4.5cm,bend angle=20,
+		 every path/.style={font=\ttfamily\scriptsize\bfseries},
+		 relation/.style={
+		 	circle,fill=blue!20,draw,font=\ttfamily\footnotesize\bfseries,
+			prefix after command= {\pgfextra{\tikzset{every label/.style={font=\ttfamily\footnotesize\bfseries,yshift=-1cm}}}}
+    		 }
+}
+\usepackage{sistyle}
+
+\lstdefinestyle{sql}{%
+	language=SQL,%
+	commentstyle=\color{comment},%
+	stringstyle=\color{string},%
+	keywordstyle=\color{keyword}\bfseries,%
+	morekeywords={text, real, begin},%
+	basicstyle=\ttfamily\footnotesize,%
+	numbers=left,
+	numberstyle=\tiny\color{black},
+	stepnumber=1,
+	showstringspaces=true,%
+	columns=fixed,%
+	moredelim=[is][\itshape]{@@}{@@},%
+	tabsize=2
+}
+\lstset{aboveskip=-.05cm,style=sql, firstline=4}
+
+\newcommand{\otext}[1]{\overset{\mathclap{\rule[-.3\baselineskip]{0pt}{0cm}\textmd{#1}}}}
+\newcommand{\set}[1]{\mathbb{#1}}
+\newcommand{\code}[1]{\texttt{{\footnotesize #1}}}
+\newcommand{\md}[1]{\textmd{#1}}
+
+% content of left head area e.g. subject like ETI
+\def \headLeft{Andreas Schmied (3087156),\newline Tobias Stumpp (3798377)}
+
+% content of center head area, used for names
+\def \names{\"Ubungsblatt 1,\\ Datenbanksysteme II}
+
+% content of right head area e.g. semester like WiSe 2012/13
+\def \headRight{\today}
+
+% set name for exercises
+\def \exerciseName{Aufgabe}
+
+\begin{document}
+%
+\exercise{}\\
+\lstinputlisting[firstline=4]{../queries/01.sql}
+%
+\newpage
+\exercise{}
+\begin{itemize}
+	\item \emph{Speicherhierarchie}\\
+	Speicherhierarchie erreicht einen preiswerten Kompromiss zwischen Zugriffsgeschwindikeit und Speicherkapazit\"at, indem eine durch Strategien und Heuristiken als aktuell signifikant befundene Teilmenge an Daten eines gro{\ss}en Speichermediums auf schnellem aber in der gr\"o{\ss}e begrenzten Speicher bereit gestellt wird. Dies ist \"uber mehrere Schichten m\"oglich.
+	\item \emph{Seek time}\\
+	Seek time bezeichnet die Verz\"ogerungszeit, die bei einer Festplatte f\"ur das Bewegen des Schreib- und Lesearms zu einem anderen Track aufgebracht wird.
+	\item \emph{Rotational delay}\\
+	Rotational delay bezeichnet die Verz\"ogerungszeit, die bei einer Festplatte  aufgebracht wird, um Daten unter den Schreib- Lesekopf zu rotieren.
+	\item \emph{Transfer time}\\
+	Transfer time bezeichnet die \"Ubertragungsdauer des grundlegenden Lese- oder Schreibprozesses einer Festplatte.
+\end{itemize}
+%
+\newpage
+\exercise{}
+Verwaltet ein DBMS seinen Speicher selbst ist es nicht weiter durch Gegebenheiten des Betriebssystems eingeschr\"ankt. Der Speicherbereich l\"asst sich dann frei, auch mit Hilfe von anderen Managern optimal f\"ur die jeweiligen Anforderungen verwalten, was Performance Vorteile birgt.
+.
+%
+\newpage
+\exercise{}
+\subExBegin{1{.}}
+	\item $t = t_s+t_r+t_{tr} = \SI{3.4}{ms}+\frac{1}{2}\cdot\frac{60}{\SI{15000}{\frac{1}{s}}}+\frac{\SI{8}{kB}}{\SI{163}{\frac{MB}{s}}} = \SI{5.45}{ms}$
+		\begin{itemize}
+			\item \emph{random access}\\
+				$t_{rdm} = 10.000 \cdot \SI{5.45}{ms} = \SI{54.5}{ms}$
+			\item \emph{sequential read}\\
+				Quelle Folien Storage, Seite 7:\\
+				Track to track: $t_{tt} = \SI{0.2}{ms}$; Daten a track: $\SI{512}{kB}$, damit $\lceil\frac{10000\cdot\SI{8}{kB}}{\SI{512}{kB}}\rceil = \SI{157}{Tracks}$\\
+				$t_{seq} = t_s + t_r + 10000 \cdot t_{tr} + 157 \cdot t_{tt} = \SI{536.9}{ms}$
+			
+		\end{itemize}
+	\item Sequentieller Zugriff erfordert nur einmaligen Aufwand von $t_s$ und $t_r$. Bis auf die $157$ Track to Track seeks wird konsequent gelesen. 
+\subExEnd
+
+\end{document}

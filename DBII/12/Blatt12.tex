@@ -1,0 +1,112 @@
+\documentclass{uni_tue_template}
+
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\hypersetup{
+			linkcolor={darkblue},
+			filecolor={darkgreen},
+			urlcolor={darkred},
+			citecolor={darkblue},
+}
+
+\usepackage[export]{adjustbox}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usepackage{rotating}
+\usepackage{sistyle}
+
+\lstdefinestyle{sql}{%
+	language=SQL,%
+	commentstyle=\color{comment},%
+	stringstyle=\color{string},%
+	keywordstyle=\color{keyword}\bfseries,%
+	morekeywords={text, real, begin},%
+	basicstyle=\ttfamily\footnotesize,%
+	numbers=left,
+	numberstyle=\tiny\color{black},
+	stepnumber=1,
+	showstringspaces=true,%
+	columns=fixed,%
+	moredelim=[is][\itshape]{@@}{@@},%
+	tabsize=2
+}
+\lstset{aboveskip=-.6cm,style=sql, firstline=4}
+
+\newcommand{\otext}[1]{\overset{\mathclap{\rule[-.3\baselineskip]{0pt}{0cm}\textmd{#1}}}}
+\newcommand{\set}[1]{\mathbb{#1}}
+\newcommand{\code}[1]{\texttt{{\footnotesize #1}}}
+\newcommand{\md}[1]{\textmd{#1}}
+\newcommand{\tn}[1]{\textup{\textsf{#1}}}
+\newcommand{\ti}[1]{\textit{\textsf{#1}}}
+
+% content of left head area e.g. subject like ETI
+\def \headLeft{Andreas Schmied (3087156),\newline Tobias Stumpp (3798377)}
+
+% content of center head area, used for names
+\def \names{\"Ubungsblatt 12,\\ Datenbanksysteme II}
+
+% content of right head area e.g. semester like WiSe 2012/13
+\def \headRight{\today}
+
+% set name for exercises
+\def \exerciseName{Aufgabe}
+
+\begin{document}
+\exercise{}\\
+  \begin{tabular}{l|l|l}
+  $\mathcal{T}_1$&$\mathcal{T}_2$&$\mathcal{T}_3$\\
+  \hline
+  $\cdot$&$\cdot$&\code{sharedLock(X)}\\
+  $\cdot$&$\cdot$&\code{r(X)}\\
+  \code{sharedLock(X)}&$\cdot$&$\cdot$\\
+  \code{r(X)}&$\cdot$&$\cdot$\\
+  $\cdot$&\code{sharedLock(Y)}&$\cdot$\\
+  $\cdot$&\code{r(Y)}&$\cdot$\\
+  \code{exclusiveLock(Y)}&$\cdot$&$\cdot$\\
+  \code{w(Y)}&$\cdot$&$\cdot$\\
+  \code{unlock(X)}&$\cdot$&$\cdot$\\
+  \code{unlock(Y)}&$\cdot$&$\cdot$\\
+  $\cdot$&\code{sharedLock(X)}&$\cdot$\\
+  $\cdot$&\code{r(X)}&$\cdot$\\
+  $\cdot$&\code{unlock(X)}&$\cdot$\\
+  $\cdot$&\code{unlock(Y)}&$\cdot$\\
+  $\cdot$&$\cdot$&\code{exclusiveLock(X)}\\
+  $\cdot$&$\cdot$&\code{w(X)}\\
+  $\cdot$&$\cdot$&\code{unlock(X)}\\
+  \code{c}&$\cdot$&$\cdot$\\
+  $\cdot$&\code{c}&$\cdot$\\
+  $\cdot$&$\cdot$&\code{c}
+  \end{tabular}\\
+  Dieses Szenario erzeugt nach \code{2PL} Regeln das gefragte Schedule.
+%
+\newpage
+%
+\exercise{}\\
+\subExBegin{1{.}}
+  \item \hfill\\
+  \begin{align*}
+  S_1 &= \left< rl_3(Z), r_3(Z), rl_2(X), r_2(X), rl_2(Y), r_2(Y), wl_2(X), w_2(X), ul_2(X), ul_2(Y), c_2, \right.\\
+  &\phantom{{}=1}\left. wl_3(Z), w_3(Z), rl_1(X), r_1(X), wl_1(Y), w_1(Y), ul_1(X), ul_1(Y), c_1, rl_3(X), r_3(X), \right.\\
+  &\phantom{{}=1}\left. ul_3(X), ul_3(Z), c_3 \right>\\
+  S_2 &= \left< rl_1(X), r_1(X), rl_3(W), r_3(W), rl_2(Y), r_2(Y), wl_2(X), w_2(X), wl_3(Y), w_3(Y), \right.\\
+  &\phantom{{}=1}\left. rl_3(Z), r_3(Z), ul_3(W), ul_3(X), ul_3(Z), c_3, wl_1(Z), w_1(Z), ul_1(W), ul_1(X), c_1, \right.\\
+  &\phantom{{}=1}\left. rl_2(W), r_2(W), ul_2(W), ul_2(X), ul_2(Y), c_2 \right>
+  \intertext{Mit $S_2$ folgt eine Deadlock! Siehe}
+  &wl_2(X) \code{\text{ denied - }X\text{ is locked by }$\mathcal{T}_1$},\\
+  &[\ldots],\\
+  &wl_3(Y) \code{\text{ denied - }Y\text{ is locked by }$\mathcal{T}_2$},\\
+  &[\ldots],\\
+  &\:wl_1(W) \code{\text{ denied - }W\text{ is locked by }$\mathcal{T}_3$}
+  \intertext{}
+  S_3 &= \left< rl_1(Y), r_1(Y), rl_3(X), r_3(X), wl_3(X), w_3(X), rl_2(X), r_2(X), wl_1(x), w_1(Y), \right.\\
+  &\phantom{{}=1}\left. ul_1(Y), c_1, rl_3(Y), r_3(Y), wl_2(Y), w_2(Y), ul_2(X), ul_2(Y), c_2, rl_3(Z), r_3(Z), \right.\\
+  &\phantom{{}=1}\left. ul_3(X), ul_3(Y), ul_3(Z), c_3 \right>
+  \end{align*}
+  \item \hfill\\
+  Nicht konservativ?
+\subExEnd{}
+
+\end{document}

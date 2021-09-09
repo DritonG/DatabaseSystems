@@ -1,0 +1,57 @@
+digraph g {
+  ranksep=0.5;
+  node [fontname = Monospace, shape = record, height = .1];
+  root [label = "<l>.|14|<m>.|22|<r>."];
+  root1[label = "<l>.| 5|<m>.|  |<r>."];
+  root2[label = "<l>.|19|<m>.|  |<r>."];
+  root3[label = "<l>.|27|<m>.|33|<r>."];
+  root4[label = "<l>.| 3|<m>.|  |<r>."];
+  root5[label = "<l>.| 7|<m>.|  |<r>."];
+  root6[label = "<l>.|16|<m>.|  |<r>."];
+  root7[label = "<l>.|20|<m>.|  |<r>."];
+  root8[label = "<l>.|24|<m>.|  |<r>."];
+  root9[label = "<l>.|29|<m>.|  |<r>."];
+  root10[label = "<l>.|34|<m>.|38|<r>."];
+  page0[label = " 2|  "];
+  page1[label = " 3|  "];
+  page2[label = " 5|  "];
+  page3[label = " 7|  "];
+  page4[label = "14|  "];
+  page5[label = "16|  "];
+  page6[label = "19|  "];
+  page7[label = "20|  "];
+  page8[label = "22|  "];
+  page9[label = "24|  "];
+  page10[label = "27|  "];
+  page11[label = "29|  "];
+  page12[label = "33|  "];
+  page13[label = "34|  "];
+  page14[label = "38|39"];
+  root:l -> root1:c;
+  root:m -> root2:c;
+  root:r -> root3:c;
+  root1:l -> root4:c;
+  root1:m -> root5:c;
+  root2:l -> root6:c;
+  root2:m -> root7:c;
+  root3:l -> root8:c;
+  root3:m -> root9:c;
+  root3:r -> root10:c;
+  root4:l -> page0:c;
+  root4:m -> page1:c;
+  root5:l -> page2:c;
+  root5:m -> page3:c;
+  root6:l -> page4:c;
+  root6:m -> page5:c;
+  root7:l -> page6:c;
+  root7:m -> page7:c;
+  root8:l -> page8:c;
+  root8:m -> page9:c;
+  root9:l -> page10:c;
+  root9:m -> page11:c;
+  root10:l -> page12:c;
+  root10:m -> page13:c;
+  root10:r -> page14:c;
+  edge[dir=both]
+  {rank=same page0 -> page1 -> page2 -> page3 -> page4 -> page5 -> page6 -> page7 -> page8 -> page9 -> page10 -> page11 -> page12 -> page13 -> page14;}
+}

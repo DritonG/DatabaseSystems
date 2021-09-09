@@ -1,0 +1,21 @@
+digraph g {
+  ranksep=0.5;
+  node [fontname = Monospace, shape = record, height = .1];
+  root [label = "<l>.| 5|<m>.|  |<r>."];
+  root1[label = "<l>.| 3|<m>.|  |<r>."];
+  root2[label = "<l>.| 7|<m>.|14|<r>."];
+  page0[label = " 2|  "];
+  page1[label = " 3|  "];
+  page2[label = " 5|  "];
+  page3[label = " 7|  "];
+  page4[label = "14|16"];
+  root:l -> root1:c;
+  root:m -> root2:c;
+  root1:l -> page0:c;
+  root1:m -> page1:c;
+  root2:l -> page2:c;
+  root2:m -> page3:c;
+  root2:r -> page4:c;
+  edge[dir=both]
+  {rank=same page0 -> page1 -> page2 -> page3 -> page4;}
+}

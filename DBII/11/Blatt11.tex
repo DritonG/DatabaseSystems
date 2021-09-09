@@ -1,0 +1,164 @@
+\documentclass{uni_tue_template}
+
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\hypersetup{
+			linkcolor={darkblue},
+			filecolor={darkgreen},
+			urlcolor={darkred},
+			citecolor={darkblue},
+}
+
+\usepackage[export]{adjustbox}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usepackage{rotating}
+\usepackage{sistyle}
+
+\lstdefinestyle{sql}{%
+	language=SQL,%
+	commentstyle=\color{comment},%
+	stringstyle=\color{string},%
+	keywordstyle=\color{keyword}\bfseries,%
+	morekeywords={text, real, begin},%
+	basicstyle=\ttfamily\footnotesize,%
+	numbers=left,
+	numberstyle=\tiny\color{black},
+	stepnumber=1,
+	showstringspaces=true,%
+	columns=fixed,%
+	moredelim=[is][\itshape]{@@}{@@},%
+	tabsize=2
+}
+\lstset{aboveskip=-.6cm,style=sql, firstline=4}
+
+\newcommand{\otext}[1]{\overset{\mathclap{\rule[-.3\baselineskip]{0pt}{0cm}\textmd{#1}}}}
+\newcommand{\set}[1]{\mathbb{#1}}
+\newcommand{\code}[1]{\texttt{{\footnotesize #1}}}
+\newcommand{\md}[1]{\textmd{#1}}
+\newcommand{\tn}[1]{\textup{\textsf{#1}}}
+\newcommand{\ti}[1]{\textit{\textsf{#1}}}
+
+% content of left head area e.g. subject like ETI
+\def \headLeft{Andreas Schmied (3087156),\newline Tobias Stumpp (3798377)}
+
+% content of center head area, used for names
+\def \names{\"Ubungsblatt 11,\\ Datenbanksysteme II}
+
+% content of right head area e.g. semester like WiSe 2012/13
+\def \headRight{\today}
+
+% set name for exercises
+\def \exerciseName{Aufgabe}
+
+\begin{document}
+\exercise{2}
+\subExBegin{{.}}
+	\item
+	\begin{enumerate}[(a)]
+		\item \hfill\\
+		\begin{enumerate}[i.]
+			\item \hfill\\
+\begin{lstlisting}
+SELECT Shipment.sno
+FROM   Shipment, Part
+WHERE  Shipment.pno = Part.pno AND
+       Part.price > 100
+\end{lstlisting}
+			\item \hfill\\
+\begin{lstlisting}
+SELECT Shipment.sno
+FROM   Shipment, Project
+WHERE  Shipment.pno = Part.pno AND
+       Shipment.jno = Project.jno AND
+       Project.jloc = 'Philadelphia'
+\end{lstlisting}
+		\end{enumerate}
+		\item \hfill\\
+		\begin{enumerate}[i.]
+			\item Ein vereinfachen des Joins würde zum Kreuzprodukt führen, ebenso würde ein Abändern der Selektion zu einem anderen Ergebnis führen.\\ Damit ist keine Vereinfachung möglich.
+			\item Ein \code{Projekt} ist einem eindeutigen \code{Part} zugeschrieben, wogegen ein \code{Part} mehreren \code{Projekt} zugewiesen sein kann.\\
+			Eine gleich resultierende Vereinfachung ist demnach:\\
+\begin{lstlisting}
+SELECT Shipment.sno
+FROM   Shipment, Project
+WHERE  Shipment.jno = Project.jno AND
+       Project.jloc = 'Philadelphia'
+\end{lstlisting}
+wobei nachfolgende Abfrage zusätzlich Tupel liefern würde, die dem richtigen \code{Part}, aber einem falschen \code{Projekt} zugewiesen sind:\\
+\begin{lstlisting}
+SELECT Shipment.sno
+FROM   Shipment, Project
+WHERE  Shipment.pno = Part.pno AND
+       Project.jloc = 'Philadelphia'
+\end{lstlisting}
+		\end{enumerate}
+	\end{enumerate}
+	\newpage
+	\item
+	\begin{enumerate}[(a)]
+		\item \hfill\\
+		\begin{enumerate}[i.]
+			\item nested\\
+			\begin{tabular}{|c|c|}
+			\multicolumn{2}{c}{\textbf{Subquery}}\\
+			\hline
+			\code{Supply.pnum = Parts.pnum}&\code{COUNT(shipdate)}\\
+			\hline
+			3&2\\
+			10&1\\
+			8&0\\
+			\hline
+			\end{tabular}
+			\begin{tabular}{|c|}
+			\multicolumn{1}{c}{\textbf{Result}}\\
+			\hline
+			\code{pnum}\\
+			\hline
+			10\\
+			8\\
+			\hline
+			\end{tabular}
+			\item unnested\\
+			\begin{tabular}{|c|c|}
+			\multicolumn{2}{c}{\textbf{Subquery}}\\
+			\hline
+			\code{Supply.pnum}&\code{COUNT(shipdate) AS ct}\\
+			\hline
+			3&2\\
+			10&1\\
+			\hline
+			\end{tabular}
+			\begin{tabular}{|c|}
+			\multicolumn{1}{c}{\textbf{Result}}\\
+			\hline
+			\code{pnum}\\
+			\hline
+			10\\
+			\hline
+			\end{tabular}
+		\end{enumerate}
+		\item \hfill\\
+		\begin{enumerate}[i.]
+			\item \hfill\\
+\begin{lstlisting}
+SELECT          pnum
+FROM            Parts
+LEFT OUTER JOIN (SELECT pnum, COUNT(shipdate) AS ct
+                 FROM   Supply
+                 WHERE  shipdate < 1-1-80
+                 GROUP BY pnum) T ON (Parts.pnum = T.pnum)
+WHERE           (Parts.qoh = 0 AND 
+                T.count IS NULL) OR
+                Parts.qoh = T.ct;
+\end{lstlisting}
+		Tupel zu denen das \code{GROUP} subquery kein Ergebnis liefert werden mit dem \code{LEFT OUTER JOIN} mit \code{NULL} in den Join aufgenommen. Die \code{WHERE} clause nimmt Selektiert diese Ergebnisse zusätzlich zu der bisherigen Selektion.
+		\end{enumerate}
+	\end{enumerate}
+\subExEnd{}
+
+
+\end{document}

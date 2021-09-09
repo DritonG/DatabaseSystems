@@ -1,0 +1,233 @@
+\documentclass{uni_tue_template}
+
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\hypersetup{
+			linkcolor={darkblue},
+			filecolor={darkgreen},
+			urlcolor={darkred},
+			citecolor={darkblue},
+}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\tikzset{<->,>=stealth',shorten >=1pt,auto,node distance=4.5cm,bend angle=20,
+		 every path/.style={font=\ttfamily\scriptsize\bfseries},
+		 relation/.style={
+		 	circle,fill=blue!20,draw,font=\ttfamily\footnotesize\bfseries,
+			prefix after command= {\pgfextra{\tikzset{every label/.style={font=\ttfamily\footnotesize\bfseries,yshift=-1cm}}}}
+			 }
+}
+\usepackage{sistyle}
+
+\lstdefinestyle{sql}{%
+	language=SQL,%
+	commentstyle=\color{comment},%
+	stringstyle=\color{string},%
+	keywordstyle=\color{keyword}\bfseries,%
+	morekeywords={text, real, begin},%
+	basicstyle=\ttfamily\footnotesize,%
+	numbers=left,
+	numberstyle=\tiny\color{black},
+	stepnumber=1,
+	showstringspaces=true,%
+	columns=fixed,%
+	moredelim=[is][\itshape]{@@}{@@},%
+	tabsize=2
+}
+\lstset{aboveskip=-.05cm,style=sql, firstline=4}
+
+\newcommand{\otext}[1]{\overset{\mathclap{\rule[-.3\baselineskip]{0pt}{0cm}\textmd{#1}}}}
+\newcommand{\set}[1]{\mathbb{#1}}
+\newcommand{\code}[1]{\texttt{{\footnotesize #1}}}
+\newcommand{\md}[1]{\textmd{#1}}
+
+% content of left head area e.g. subject like ETI
+\def \headLeft{Andreas Schmied (3087156),\newline Tobias Stumpp (3798377)}
+
+% content of center head area, used for names
+\def \names{\"Ubungsblatt 2,\\ Datenbanksysteme II}
+
+% content of right head area e.g. semester like WiSe 2012/13
+\def \headRight{\today}
+
+% set name for exercises
+\def \exerciseName{Aufgabe}
+
+\begin{document}
+\exercise{}
+\subExBegin{1{.}}
+	\item
+	\begin{enumerate}
+		\item[FIFO]
+		\begin{enumerate}
+			\item[Buffergröße 3 Frames]\hfill\\
+			$\begin{array}{r|ccc|l}
+			$victim$ &   1 &   2 &   3 & $page$	 \\
+			\hline
+					 &	 &	 & p_1 & $miss $ p_1\\
+					 &	 & p_1 & p_2 & $miss $ p_2\\
+					 & p_1 & p_2 & p_3 & $miss $ p_3\\
+				 p_1 & p_2 & p_3 & p_4 & $miss $ p_4\\
+				 p_2 & p_3 & p_4 & p_1 & $miss $ p_1\\
+				 p_3 & p_4 & p_1 & p_2 & $miss $ p_2\\
+				 p_4 & p_1 & p_2 & p_5 & $miss $ p_5\\
+					 & p_1 & p_2 & p_5 & $hit $ p_1 \\
+					 & p_1 & p_2 & p_5 & $hit $ p_2 \\
+				 p_1 & p_2 & p_5 & p_3 & $miss $ p_3\\
+				 p_2 & p_5 & p_3 & p_4 & $miss $ p_4\\
+					 & p_5 & p_3 & p_4 & $hit $  p_4
+			\end{array}$
+			\item[Buffergröße 4 Frames]\hfill\\
+			$\begin{array}{r|cccc|l}
+			$victim$ &   1 &   2 &   3 &   4 & $page$	 \\
+			\hline
+					 &	 &	 &	 & p_1 & $miss $ p_1\\
+					 &	 &	 & p_1 & p_2 & $miss $ p_2\\
+					 &	 & p_1 & p_2 & p_3 & $miss $ p_3\\
+					 & p_1 & p_2 & p_3 & p_4 & $miss $ p_4\\
+					 & p_1 & p_2 & p_3 & p_4 & $hit $ p_1 \\
+					 & p_1 & p_2 & p_3 & p_4 & $hit $ p_2 \\
+				 p_1 & p_2 & p_3 & p_4 & p_5 & $miss $ p_5\\
+				 p_2 & p_3 & p_4 & p_5 & p_1 & $miss $ p_1\\
+				 p_3 & p_4 & p_5 & p_1 & p_2 & $miss $ p_2\\
+				 p_4 & p_5 & p_1 & p_2 & p_3 & $miss $ p_3\\
+				 p_5 & p_1 & p_2 & p_3 & p_4 & $miss $ p_4\\
+				 p_1 & p_2 & p_3 & p_4 & p_5 & $miss $ p_4
+			\end{array}$
+		\end{enumerate}
+		\code{FIFO} löst mit $3$ Frames $9$ page-faults aus, mit $4$ Frames entsprechend $10$ page-faults.
+		\newpage
+		\item[LRU]
+		\begin{enumerate}
+			\item[Buffergröße 3 Frames]\hfill\\
+			$\begin{array}{r|ccc|l}
+			$victim$ &   1 &   2 &   3 & $page$	 \\
+			\hline
+					 &	 &	 & p_1 & $miss $ p_1\\
+					 &	 & p_1 & p_2 & $miss $ p_2\\
+					 & p_1 & p_2 & p_3 & $miss $ p_3\\
+				 p_1 & p_2 & p_3 & p_4 & $miss $ p_4\\
+				 p_2 & p_3 & p_4 & p_1 & $miss $ p_1\\
+				 p_3 & p_4 & p_1 & p_2 & $miss $ p_2\\
+				 p_4 & p_1 & p_2 & p_5 & $miss $ p_5\\
+					 & p_2 & p_5 & p_1 & $hit $ p_1 \\
+					 & p_5 & p_1 & p_2 & $hit $ p_2 \\
+				 p_5 & p_1 & p_2 & p_3 & $miss $ p_3\\
+				 p_1 & p_2 & p_3 & p_4 & $miss $ p_4\\
+				 p_2 & p_3 & p_4 & p_5 & $miss $ p_5
+			\end{array}$
+			\item[Buffergröße 4 Frames]\hfill\\
+			$\begin{array}{r|cccc|l}
+			$victim$ &   1 &   2 &   3 &   4 & $page$	 \\
+			\hline
+					 &	 &	 &	 & p_1 & $miss $ p_1\\
+					 &	 &	 & p_1 & p_2 & $miss $ p_2\\
+					 &	 & p_1 & p_2 & p_3 & $miss $ p_3\\
+					 & p_1 & p_2 & p_3 & p_4 & $miss $ p_4\\
+					 & p_2 & p_3 & p_4 & p_1 & $hit $ p_1 \\
+					 & p_3 & p_4 & p_1 & p_2 & $hit $ p_2 \\
+				 p_3 & p_4 & p_1 & p_2 & p_5 & $miss $ p_5\\
+					 & p_4 & p_2 & p_5 & p_1 & $hit $ p_1 \\
+					 & p_4 & p_5 & p_1 & p_2 & $hit $ p_2 \\
+				 p_4 & p_5 & p_1 & p_2 & p_3 & $miss $ p_3\\
+				 p_5 & p_1 & p_2 & p_3 & p_4 & $miss $ p_4\\
+				 p_1 & p_2 & p_3 & p_4 & p_5 & $miss $ p_5
+			\end{array}$
+		\end{enumerate}
+		\code{LRU} löst mit $3$ Frames $10$ page-faults aus, mit $4$ Frames entsprechend $8$ page-faults.
+	\end{enumerate}
+	\item Die Information über die Häufigkeit der bisherigen Zugriffe auf die einzelnen Seiten, also die Relevanz einer Seite gegenüber anderen Seiten.
+\subExEnd
+%
+\newpage
+%
+\exercise{}
+\subExBegin{1{.}}
+	\item \code{LRU-1} entspricht dem Verhalten von \code{LRU}, da $b_t(p, k)$ das Durchsuchen des Referenzstrings $r$ nach einer spezifizierten Seite beim ersten Fund abbricht und folglich die Distanz der im String am weitesten zurückliegenden Seite am Größten ist, was wie beim \code{LRU} einem Victim der "least recent" page entspricht.
+	\item Misses bestimmt durch Simulation, (src und jar sind beigefügt \code{LRUk.jar})\\
+	Seitenfehler je \code{LRU-k}:
+	\begin{itemize}
+		\item[\code{LRU-1}:] 189
+		\item[\code{LRU-2}:] 100
+	\end{itemize}
+	\begin{itemize}
+		\item[Vorteile  \code{LRU-2}:] deutlich schneller als \code{LRU}
+		\item[Nachteile \code{LRU-2}:] \code{LRU} reicht es aus Information über die gepufferten Pages zu haben, \code{LRU-2} benötigt die weitere Information zum vorherigen Verlauf (Referensstring \code{R}).
+	\end{itemize} 
+\subExEnd
+%
+\newpage
+%
+\exercise{}
+\subExBegin{1{.}}
+	\item \hfill\\
+		\begin{enumerate}
+			\item[über Tupel]\hfill\\
+				Record:\\
+				$\SI{4}{Byte} + \SI{30}{Byte} + \SI{2}{Byte} + \SI{4}{Byte} = \SI{40}{Byte}$
+				Freier Speicher:\\
+				$\SI{1024}{Byte} - \SI{68}{Byte} - \SI{40}{Byte} - \SI{1}{Byte} = \SI{915}{Byte}$
+			\item[über Spalten]\hfill\\
+				Record:\\
+				$p_0$: $\SI{4}{Byte}$\\
+				$p_1$: $\SI{30}{Byte}$\\
+				$p_2$: $\SI{2}{Byte}$\\
+				$p_3$: $\SI{4}{Byte}$\\
+				Freier Speicher:\\
+				$p_0$: $\SI{1024}{Byte} - \SI{68}{Byte} - \SI{4}{Byte} - \SI{1}{Byte} = \SI{951}{Byte}$\\
+				$p_1$: $\SI{1024}{Byte} - \SI{68}{Byte} - \SI{30}{Byte} - \SI{1}{Byte} = \SI{925}{Byte}$\\
+				$p_2$: $\SI{1024}{Byte} - \SI{68}{Byte} - \SI{2}{Byte} - \SI{1}{Byte} = \SI{953}{Byte}$\\
+				$p_3$: $\SI{1024}{Byte} - \SI{68}{Byte} - \SI{4}{Byte} - \SI{1}{Byte} = \SI{951}{Byte}$\\
+				Gesamt: $\SI{3780}{Byte}$
+		\end{enumerate}
+		\newpage
+	\item \hfill\\
+		\begin{enumerate}
+			\item[über Tupel]\hfill\\
+				Frei: $\SI{1024}{Byte} - \SI{68}{Byte} - 23 \cdot \SI{40}{Byte} - \SI{3}{Byte} = \SI{33}{Byte}$\\
+				Für beide Queries werde alle Pages referenziert, es gilt:
+				$\left\lceil\dfrac{100000}{23}\right\rceil = \SI{4348}{Pages}$
+			\item[über Spalten]\hfill\\
+				\begin{enumerate}
+					\item[PNr, Gehalt:]\hfill\\
+						Frei: $\SI{1024}{Byte} - \SI{68}{Byte} - 231 \cdot \SI{4}{Byte} - \SI{29}{Byte} = \SI{3}{Byte}$
+					\item[Name:]\hfill\\
+						Frei: $\SI{1024}{Byte} - \SI{68}{Byte} - 31 \cdot 30 - 4 = \SI{22}{Byte}$
+					\item[Rang:]\hfill\\
+						Frei: $\SI{1024}{Byte} - \SI{68}{Byte} - 449 \cdot 2 - \SI{57}{Byte} = \SI{1}{Byte}$
+				\end{enumerate}
+				\begin{enumerate}[(a)]
+					\item\hfill\\
+						\begin{enumerate}
+							\item[Pnr:]
+								$\left\lceil\dfrac{100000}{231}\right\rceil = 433$
+							\item[Name:]
+								$\left\lceil\dfrac{100000}{31}\right\rceil = 3226$
+ 							\item[Rang:]
+ 								$\left\lceil\dfrac{100000}{449}\right\rceil = 228$
+							\item[Gehalt:]
+								$\left\lceil\dfrac{100000}{231}\right\rceil = 433$
+								Gesamt: $\SI{4320}{Pages}$
+						\end{enumerate}
+					\item\hfill\\
+						\begin{enumerate}
+							\item[Name:]
+								 $\left\lceil\dfrac{100000}{31}\right\rceil = \SI{3226}{Pages}$ pages
+						\end{enumerate}
+				\end{enumerate}
+		\end{enumerate}
+		\newpage
+	\item Die Unterschiede in der Organisation von Daten lassen sich maßgeblich auf Festplattenzugriffe zurückführen, also wieviele Pages geladen werden.\\
+	Daher ergibt sich bei Organisation über\\
+		\begin{enumerate}
+			\item[Tupel] Effizient bei Zugriff auf viele Spalten bei wenigen Tupeln oder beim Ändern von Tupeln.
+			\item[Spalten] Effizient bei Zugriff auf viele Tupel bei wenigen Spalten oder beim Ändern von Spalten.
+		\end{enumerate}
+\subExEnd
+
+\end{document}

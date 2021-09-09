@@ -1,0 +1,133 @@
+\documentclass{uni_tue_template}
+
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\hypersetup{
+			linkcolor={darkblue},
+			filecolor={darkgreen},
+			urlcolor={darkred},
+			citecolor={darkblue},
+}
+
+\usepackage{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\tikzset{<->,>=stealth',shorten >=1pt,auto,node distance=4.5cm,bend angle=20,
+		 every path/.style={font=\ttfamily\scriptsize\bfseries},
+		 relation/.style={
+		 	circle,fill=blue!20,draw,font=\ttfamily\footnotesize\bfseries,
+			prefix after command= {\pgfextra{\tikzset{every label/.style={font=\ttfamily\footnotesize\bfseries,yshift=-1cm}}}}
+			 }
+}
+\usepackage{sistyle}
+
+\lstdefinestyle{sql}{%
+	language=SQL,%
+	commentstyle=\color{comment},%
+	stringstyle=\color{string},%
+	keywordstyle=\color{keyword}\bfseries,%
+	morekeywords={text, real, begin},%
+	basicstyle=\ttfamily\footnotesize,%
+	numbers=left,
+	numberstyle=\tiny\color{black},
+	stepnumber=1,
+	showstringspaces=true,%
+	columns=fixed,%
+	moredelim=[is][\itshape]{@@}{@@},%
+	tabsize=2
+}
+\lstset{aboveskip=-.05cm,style=sql, firstline=4}
+
+\newcommand{\otext}[1]{\overset{\mathclap{\rule[-.3\baselineskip]{0pt}{0cm}\textmd{#1}}}}
+\newcommand{\set}[1]{\mathbb{#1}}
+\newcommand{\code}[1]{\texttt{{\footnotesize #1}}}
+\newcommand{\md}[1]{\textmd{#1}}
+
+% content of left head area e.g. subject like ETI
+\def \headLeft{Andreas Schmied (3087156),\newline Tobias Stumpp (3798377)}
+
+% content of center head area, used for names
+\def \names{\"Ubungsblatt 4,\\ Datenbanksysteme II}
+
+% content of right head area e.g. semester like WiSe 2012/13
+\def \headRight{\today}
+
+% set name for exercises
+\def \exerciseName{Aufgabe}
+
+\begin{document}
+\exercise{}
+\subExBegin{1{.}}
+  \item \begin{itemize}
+    \item \emph{Was ist ein Index über einem File of Records?}\\
+    Ein Suchbaum, der auf einer Relation effizientes Aufsuchen von Records ermöglicht.
+    \item \emph{Was ist der search key eines INdexes?}\\
+    Er entspricht recordweisen Metadaten, welche zur eindeutigen Suche auf dem Suchbaum verwendet werden. 
+    \item \emph{Wozu benötigen wir Indizes?}\\
+    Sie ermöglichen das effiziente Aufsuchen von Records einer bestimmten Range, da bei der Suche größere Schritte gemacht werden.
+    \end{itemize}
+  \item \emph{Welche grundlegende Designalternativen gibt es bezogen auf die Einträge eines Indexes?}\\
+    Alternativen im Umfang des Eintrags:
+    \begin{itemize}
+    \item eines Records rid
+    \item mehrerer Records rid
+    \item einen Record komplett
+    \end{itemize}
+  \item \begin{itemize}
+    \item \emph{Was ist der Unterschied zwischen einem clustered und einem unclustered Index?}
+    \begin{description}
+    \item[clustered] Zu Deutsch: zusammen gebunden. Die Daten zwischen Index und Datei befinden sich gebunden in der gleichen Reihenfolge angeordnet.
+    \item[unclustered] Die Daten der Datei werden frei geordnet.
+    \end{description}
+    \item \emph{Kann ein Index unclustered sein, wenn dessen Einträge die Daten-Records enthalten?}\\
+    Ein solcher die Daten-Records enthaltender Index ist immer clustered.
+  \end{itemize}
+\subExEnd{}
+%
+\newpage 
+%
+\exercise{}
+%
+\newpage 
+%
+\exercise{}
+\subExBegin{1{.}}
+  \item \begin{itemize}
+    \item \emph{Schätzen sie für jede der drei in der Vorlesung erläuterten, grundlegenden Datei-Organisationen die Kosten der Query für den Fall, dass die Bedienung auf kein Tupel der Relation zutrifft.}
+    \begin{description}
+    \item[heap] Zugriff auf jede Page und vergleichen aller Tupel \[\text{Delete\textsubscript{heap}} = b \cdot \left(D + r \cdot \left(C + H\right)\right)\]
+    \item[sorted] Die binäre Suche findet Page und Tupel \[\text{Delete\textsubscript{sorted}} = log_2\left(b\right) \cdot D + log_2\left(r\right) \cdot \left(C + H\right)\]
+    \item[hashed] Konstanter Pagezugriff durch Hash, lineare Pagesuche \[\text{Delete\textsubscript{hashed}} = H + D + r \cdot C\]
+    \end{description}
+    \item \emph{WIe hoch sind die Kosten, wenn \code{a} kein Schlüssel von \code{R} ist?}
+    \begin{description}
+    \item[heap, sorted] Zugriff auf jede Page und vergleichen aller Tupel \[\text{Delete\textsubscript{sorted}} = \text{Delete\textsubscript{heap}} = b \cdot \left(D + r \cdot \left(C + H\right)\right)\]
+    \item[hashed] Zugriff auf jede Page und vergleichen aller Tupel \[\text{Delete\textsubscript{hashed}} = \underbrace{\left(100/80\right)}_{1.25} \cdot \left(D + r \cdot \left(C + H\right)\right) = \underbrace{\left(100/80\right)}_{1.25} \cdot \text{Delete\textsubscript{heap}}\]
+    \end{description}
+    \end{itemize}
+  \item \emph{[..] Ist hier das Benutzen des Indexes immer eine gute Idee?}
+    Nein, da die Heap-Datei unsortiert ist, gilt es folgendes abzuwägen:\\
+    Potenziell ist bei einer Range-Query das Auswerten mit einem Index aufgrund der Suche im Baum schneller, da jedoch in der Datei, unclustered, zwischen Pages gesprungen wird verzögert sich der Zugriff, sodass ein Sequential Scan mit dem Vermeiden von Seeks deutlich schneller ist.
+\subExEnd{}
+%
+\newpage 
+%
+\exercise{}
+\subExBegin{1{.}}
+  \item \emph{Gegeben Sei ein unclustered B+-Index. Berechnen Sie die Ordnung d der inneren Knoten des Baumes unter der Annahme folgender Größen: Pagesize $p = \SI{4096}{Bytes}$, Schlüsselgröße $s = \SI{4}{Bytes}$, Pointerlänge $v = \SI{6}{Bytes}$.}
+    \[\underbrace{\left(n + 1\right)}_{\text{\# Pointer}} \cdot \SI{6}{Bytes} + \underbrace{n}_{\text{\# Schlüssel}} \cdot \SI{4}{Bytes} = \SI{4096}{Bytes}  \Rightarrow \left(n + 1)\right) = \underbrace{410}_{\text{maximale \# Pointer á Page}}\]
+    Mit Ordung $d$ hat jede Page des B+-Baumes mit $d \leq k \leq 2d$ einen Füllgrad größer $\frac{1}{2}$: \[d = \left\lceil\frac{n}{2}\right\rceil = \left\lceil\frac{409}{2}\right\rceil = 205\]
+  \item \emph{Wie groß ist in diesem Fall der fanout des Baumes?}\\
+    Mit der maximalen Pointeranzahl einer Page $\frac{n+1}{2} \leq F \leq n$ ist der fanout: \[205 \leq F \leq 410 \Rightarrow F_{\text{max}} = 410\]
+  \item \emph{Angenommen die indexierte Relation habe $10^8$ Tupel. Wie tief ist der B+-Baum?}
+  \[\left\lfloor \log_{205}\left(10^8+1\right)\right\rfloor = 3\]
+  Bei einem fanout von $205$ hat der Baum mindestens eine Tiefe von $3$.
+  \emph{Wie tief wäre stattdessen ein balancierter binärer Suchbaum für diese Relation?}
+    \[\left\lfloor \log_{2}\left(10^8+1\right)\right\rfloor = 26\]
+    Der Binäre Baum hat eine Mindesttiefe von $26$.
+\subExEnd{}
+
+\end{document}

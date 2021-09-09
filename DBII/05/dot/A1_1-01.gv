@@ -1,0 +1,6 @@
+digraph g {
+  node [fontname = Monospace, shape = record, height = .1];
+  root [label = "<l>.|  |<m>.|  |<r>."];
+  page0[label = " 2|  "];
+  root:l -> page0:c;
+}

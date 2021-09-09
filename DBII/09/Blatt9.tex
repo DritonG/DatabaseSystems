@@ -1,0 +1,220 @@
+\documentclass{uni_tue_template}
+
+\usepackage{color}
+\usepackage[colorlinks]{hyperref}
+\definecolor{darkred}{rgb}{0.5,0,0}
+\definecolor{darkgreen}{rgb}{0,0.5,0}
+\definecolor{darkblue}{rgb}{0,0,0.7}
+\hypersetup{
+			linkcolor={darkblue},
+			filecolor={darkgreen},
+			urlcolor={darkred},
+			citecolor={darkblue},
+}
+
+\usepackage[export]{adjustbox}
+\usepackage{tikz}
+\usetikzlibrary{shapes}
+\usepackage{rotating}
+\usepackage{sistyle}
+
+\lstdefinestyle{sql}{%
+	language=SQL,%
+	commentstyle=\color{comment},%
+	stringstyle=\color{string},%
+	keywordstyle=\color{keyword}\bfseries,%
+	morekeywords={text, real, begin},%
+	basicstyle=\ttfamily\footnotesize,%
+	numbers=left,
+	numberstyle=\tiny\color{black},
+	stepnumber=1,
+	showstringspaces=true,%
+	columns=fixed,%
+	moredelim=[is][\itshape]{@@}{@@},%
+	tabsize=2
+}
+\lstset{aboveskip=-.6cm,style=sql, firstline=4}
+
+\newcommand{\otext}[1]{\overset{\mathclap{\rule[-.3\baselineskip]{0pt}{0cm}\textmd{#1}}}}
+\newcommand{\set}[1]{\mathbb{#1}}
+\newcommand{\code}[1]{\texttt{{\footnotesize #1}}}
+\newcommand{\md}[1]{\textmd{#1}}
+\newcommand{\tn}[1]{\textup{\textsf{#1}}}
+\newcommand{\ti}[1]{\textit{\textsf{#1}}}
+
+% content of left head area e.g. subject like ETI
+\def \headLeft{Andreas Schmied (3087156),\newline Tobias Stumpp (3798377)}
+
+% content of center head area, used for names
+\def \names{\"Ubungsblatt 8,\\ Datenbanksysteme II}
+
+% content of right head area e.g. semester like WiSe 2012/13
+\def \headRight{\today}
+
+% set name for exercises
+\def \exerciseName{Aufgabe}
+
+\begin{document}
+\exercise{}\\
+\begin{itemize}
+  \item Vereinigung ($\cup$)
+  \begin{itemize}
+    \item hashbasiert\\
+		\begin{function}[H]
+		\SetKwData{r}{r}\SetKwData{R}{R\textsubscript{1}}\SetKwData{S}{R\textsubscript{2}}\SetKwData{T}{R\textsubscript{res}}\SetKwData{partition}{partition}\SetKwData{H}{H}
+		\SetKwFunction{Union}{union}\SetKwFunction{append}{append}\SetKwFunction{h}{h}
+		\Function{\Union{\R, \S}}\\
+		build hash table \H\;
+		\ForEach{\tn{record} \r $\in$ \R}{\If{mismatch on \H via \h{\r}}{\append \r \KwTo \T\;}}
+		\ForEach{\tn{record} \r $\in$ \S}{\If{mismatch on \H via \h{\r}}{\append \r \KwTo \T\;}}
+		return \T\;
+		\end{function}
+    \item sortierungsbasiert\\
+   		\begin{function}[H]
+   		\SetKwData{r}{r}\SetKwData{ri}{r\textsubscript{i}}\SetKwData{rii}{r\textsubscript{i+1}}\SetKwData{R}{R\textsubscript{1}}\SetKwData{S}{R\textsubscript{2}}\SetKwData{T}{R\textsubscript{res}}\SetKwData{partition}{partition}\SetKwData{H}{H}
+   		\SetKwFunction{Union}{union}\SetKwFunction{append}{append}\SetKwFunction{h}{h}
+   		\Function{\Union{\R, \S}}\\
+   		\ForEach{\tn{record} \r $\in$ \R}{\append \r \KwTo \T\;}
+   		\ForEach{\tn{record} \r $\in$ \S}{\append \r \KwTo \T\;}
+   		\ForEach{\tn{record} \ri $\in$ \T}{\If{\rii exists}{\If{\rii equals \ri}{\T $\leftarrow$ \T $\setminus$ \rii}}}
+   		return \T\;
+   		\end{function}
+  \end{itemize}
+  \newpage
+  \item Vereinigung ($\cap$)
+  \begin{itemize}
+    \item hashbasiert\\
+		\begin{function}[H]
+		\SetKwData{r}{r}\SetKwData{R}{R\textsubscript{1}}\SetKwData{S}{R\textsubscript{2}}\SetKwData{T}{R\textsubscript{res}}\SetKwData{partition}{partition}\SetKwData{H}{H}
+		\SetKwFunction{Union}{union}\SetKwFunction{append}{append}\SetKwFunction{h}{h}
+		\Function{\Union{\R, \S}}\\
+		build hash table \H\;
+		\ForEach{\tn{record} \r $\in$ \R}{\If{mismatch on \H via \h{\r}}{\append \r \KwTo \T\;}}
+		\ForEach{\tn{record} \r $\in$ \S}{\If{match on \H via \h{\r}}{\append \r \KwTo \T\;}}
+		return \T\;
+		\end{function}
+    \item sortierungsbasiert\\
+   		\begin{function}[H]
+   		\SetKwData{r}{r}\SetKwData{ri}{r\textsubscript{i}}\SetKwData{rii}{r\textsubscript{i+1}}\SetKwData{R}{R\textsubscript{1}}\SetKwData{S}{R\textsubscript{2}}\SetKwData{T}{R\textsubscript{1,2}}\SetKwData{U}{R\textsubscript{res}}\SetKwData{partition}{partition}\SetKwData{H}{H}\SetKwData{riii}{r\textsubscript{res\textsubscript{|R\textsubscript{res}|}}}
+   		\SetKwFunction{Union}{union}\SetKwFunction{append}{append}\SetKwFunction{h}{h}
+   		\Function{\Union{\R, \S}}\\
+   		\ForEach{\tn{record} \r $\in$ \R}{\append \r \KwTo \T\;}
+   		\ForEach{\tn{record} \r $\in$ \S}{\append \r \KwTo \T\;}
+   		
+   		\ForEach{\tn{record} \ri $\in$ \T}{\If{\rii exists}{\If{\rii equals \ri}{\tcp{r\textsubscript{res\textsubscript{|R\textsubscript{res}|}} is the least entry of R\textsubscript{res}}\If{\riii $\neq$ \rii}{\U $\leftarrow$ \T $\setminus$ \ri}}}}
+   		return \U\;
+   		\end{function}
+  \end{itemize}
+\end{itemize}
+%
+\newpage 
+%
+\exercise{}\\
+\begin{itemize}
+	\item block nested loop join\\
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}\SetKwData{p}{p}\SetKwData{bR}{b\textsubscript{R}}\SetKwData{bS}{b\textsubscript{S}}\SetKwData{rbR}{r\textsubscript{b\textsubscript{R}}}\SetKwData{rbS}{r\textsubscript{b\textsubscript{S}}}
+		\SetKwFunction{FFunction}{block\_nljoin}
+		\Function{\FFunction{\R, \S, \p}}\\
+		\ForEach{\bR-sized block in \R}{\ForEach{\bS-sized block in \S}{\tcc{performed in the buffer}
+		\tcc{find matches in current \R- and \S-blocks and append them to the result}
+		\ForEach{record \rbR $\in$ \bR}{\ForEach{record \rbS $\in$ \bS}{\If{$\langle\rbR,\rbS\rangle$ matches \p}{append $\langle\rbR,\rbS\rangle$ to the result and mark as matched}}\If{is not marked as copied}{append $\langle\rbR,-\rangle$ to the result}}}}
+		\end{function}
+		Tritt das Prädikat auf mindestens ein Tupel zusammengefügt aus beiden Relationen zu, wird dieses der Zieltabelle angehängt. Sollte sich kein solches Tupel für ein Tupel der Relation $R$ finden, wird $r_{b_R}$ ohne Partner der Zieltabelle angefügt, da es unmarkiert blieb.
+	\item index nested loop join\\
+   		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}\SetKwData{p}{p}\SetKwData{r}{r}\SetKwData{s}{s}\SetKwData{R}{R}
+		\SetKwFunction{FFunction}{index\_nljoin}\SetKwFunction{Search}{IndexScan}
+		\Function{\FFunction{\R, \S, \p}}\\
+		\ForEach{record \r $\in$ \R}{\tcc{scan \S-index using (key value in) \r and concatenate \r with all matching tuples s}
+		\If{$\langle\r,\Search{\r, \S}\rangle$ matches \p}{\ForEach{\s $\in$ \Search{\r, \S}}{append $\langle\r,\s\rangle$ to result}\lElse{append $\langle\r,-\rangle$ to result}}}
+   		\end{function}
+   		Sofern der IndexScan mindestens ein Element liefert, finden sich für $r$ Partner. Andernfalls gibt es kein Tupel $\langle r, s\rangle$, $\langle r,-\rangle$ wird dem Ergebnis angefügt.
+	\end{itemize}
+%
+\newpage
+%
+\exercise{}
+%
+\newpage
+%
+\exercise{}
+\subExBegin{1{.}}
+	\item
+	\begin{enumerate}[(a)]
+		\item \hfill\\
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}
+		\SetKwFunction{FFunction}{open}
+		\Function{\FFunction{}}\\
+		\R.\FFunction{}\;
+		\S.\FFunction{}\;
+		\end{function}
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}
+		\SetKwFunction{FFunction}{close}
+		\Function{\FFunction{}}\\
+		\R.\FFunction{}\;
+		\S.\FFunction{}\;
+		\end{function}
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}\SetKwData{r}{r}\SetKwData{s}{s}
+		\SetKwFunction{FFunction}{next}
+		\Function{\FFunction{}}\\
+		\If{$($\r $\leftarrow$ \R.\FFunction{}$)$ $\neq$ $\langle \tn{EOF} \rangle$}{return \r\;
+		\lElse{\If{$($\s $\leftarrow$ \S.\FFunction{}$)$ $\neq$ $\langle \tn{EOF} \rangle$}{return \s\;}\lElse{return $\langle \tn{EOF} \rangle$}}}
+		\end{function}
+		\newpage
+		\item \hfill\\
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}
+		\SetKwFunction{FFunction}{open}
+		\Function{\FFunction{}}\\
+		\R.\FFunction{}\;
+		\S.\FFunction{}\;
+		\end{function}
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}
+		\SetKwFunction{FFunction}{close}
+		\Function{\FFunction{}}\\
+		\R.\FFunction{}\;
+		\S.\FFunction{}\;
+		\end{function}
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}\SetKwData{r}{r}\SetKwData{s}{s}\SetKwData{H}{H}
+		\SetKwFunction{FFunction}{next}\SetKwFunction{h}{h}
+		\Function{\FFunction{}}\\
+		\If{$(($\r $\leftarrow$ \R.\FFunction{}$)$ $\neq$ $\langle \tn{EOF} \rangle)$ $\&$ \r mismatches \H}{add \r via \h{r} to \H\;return \r\;
+		\lElse{\If{$(($\s $\leftarrow$ \S.\FFunction{}$)$ $\neq$ $\langle \tn{EOF} \rangle)$ $\&$ \s mismatches \H}{add \s via \h{r} to \H\;return \s\;}\lElse{\If{$(($\r $\leftarrow$ \R.\FFunction{}$)$ $\neq$ $\langle \tn{EOF} \rangle)$ $\&$ $($\s $\leftarrow$ \S.\FFunction{}$)$ $\neq$ $\langle \tn{EOF} \rangle))$}{return \FFunction{}\;}}\lElse{return $\langle \tn{EOF} \rangle$}}}
+		\end{function}
+		\newpage
+		\item \hfill\\
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}
+		\SetKwFunction{FFunction}{open}
+		\Function{\FFunction{}}\\
+		\R.\FFunction{}\;
+		\S.\FFunction{}\;
+		\end{function}
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}
+		\SetKwFunction{FFunction}{close}
+		\Function{\FFunction{}}\\
+		\R.\FFunction{}\;
+		\S.\FFunction{}\;
+		\end{function}
+		\begin{function}[H]
+		\SetKwData{R}{R}\SetKwData{S}{S}\SetKwData{r}{r}\SetKwData{s}{s}\SetKwData{sum}{sum}
+		\SetKwFunction{FFunction}{next}
+		\Function{\FFunction{}}\\
+		\While{$($\r $\leftarrow$ \R.\FFunction{}$)$ $\neq$ $\langle \tn{EOF} \rangle$}{\sum $\leftarrow$ \sum + \r}
+		\While{$($\s $\leftarrow$ \S.\FFunction{}$)$ $\neq$ $\langle \tn{EOF} \rangle$}{\sum $\leftarrow$ \sum + \s}
+		return $\langle \tn{EOF} \rangle$\;
+		\end{function}
+	\end{enumerate}
+	\item \code{UNION ALL} und \code{UNION} sind nicht blockende Operatoren, mit \code{next()} wird nur ein einziges Tupel geliefert.\\
+	\code{SUM} hingegen muss alle Tupel durchlaufen, da sonst unvollständig, er ist ein blockender Operator.
+\subExEnd{}
+
+
+\end{document}
